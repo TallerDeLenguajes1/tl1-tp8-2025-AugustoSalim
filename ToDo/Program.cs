@@ -17,7 +17,6 @@
         // Bucle para asegurar que el usuario ingrese una opción válida
         while (opcion != 5)
         {
-            Console.Clear();
             GestorDeTareas.MostrarMenu(); // Mostrar el menú
 
             // Leer la opción del usuario

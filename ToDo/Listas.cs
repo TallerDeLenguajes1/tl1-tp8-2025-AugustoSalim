@@ -50,7 +50,7 @@ namespace Lista
             int indice, end = 1;
             do
             {
-                Console.Clear();
+                //no me gusta el usar el convert, no entiendo bien para que es, prefiero tryparse
                 MostrarLista(pendientes, realizadas);
                 Console.WriteLine("Ingrese el índice de la tarea que desea marcar como realizada: ");
                 indice = Convert.ToInt32(Console.ReadLine()) - 1;
@@ -77,6 +77,7 @@ namespace Lista
             Console.WriteLine("Ingrese la palabra para buscar: ");
             palabra = Console.ReadLine();
 
+            //quiero cambiar la forma en la que se buscan las tareas. Prefiero comparar el tema de las mayusculas tambien y si se llega a encontrar parte de la cadena en lo que estoy buscando
             bool encontrado = false;
             foreach (Tarea tarea in pendientes)
             {
