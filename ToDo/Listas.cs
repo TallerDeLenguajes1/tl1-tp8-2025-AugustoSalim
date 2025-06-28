@@ -3,10 +3,12 @@ namespace Lista
     // Clase que representa una tarea
     public class Tarea
     {
-        public int TareaID { get; set; }
-        public string Descripcion { get; set; }
-        public int Duracion { get; set; }
+        // Propiedades públicas de la tarea
+        public int TareaID { get; set; }         // ID único de la tarea
+        public string Descripcion { get; set; }  // Descripción textual de la tarea
+        public int Duracion { get; set; }        // Duración en horas (entre 10 y 100)
 
+        // Constructor para crear una nueva tarea con ID, descripción y duración
         public Tarea(int id, string descripcion, int duracion)
         {
             TareaID = id;
@@ -15,10 +17,10 @@ namespace Lista
         }
     }
 
-    // Clase que contiene todos los métodos para manejar las tareas
+    // Clase que contiene todas las funciones para gestionar las tareas
     public class GestorDeTareas
     {
-        // Función para mostrar los detalles de una tarea
+        // Función para mostrar en pantalla una sola tarea
         public static void MostrarTarea(Tarea tarea)
         {
             Console.WriteLine("---------------");
@@ -28,37 +30,43 @@ namespace Lista
             Console.WriteLine("---------------");
         }
 
-        // Función para mostrar la lista de tareas pendientes y realizadas
+        // Función para mostrar ambas listas: pendientes y realizadas
         public static void MostrarLista(List<Tarea> pendientes, List<Tarea> realizadas)
         {
             Console.WriteLine("\n---------------TAREAS PENDIENTES---------------\n");
             foreach (Tarea tarea in pendientes)
             {
-                MostrarTarea(tarea); // Mostrar cada tarea en pendientes
+                MostrarTarea(tarea);
             }
 
             Console.WriteLine("\n---------------TAREAS COMPLETADAS---------------\n");
             foreach (Tarea tarea in realizadas)
             {
-                MostrarTarea(tarea); // Mostrar cada tarea en realizadas
+                MostrarTarea(tarea);
             }
         }
 
         // Función para mover tareas de pendientes a realizadas
         public static void OrdenarTareas(List<Tarea> pendientes, List<Tarea> realizadas)
         {
-            int indice, end = 1;
-            do
-            {
-                //no me gusta el usar el convert, no entiendo bien para que es, prefiero tryparse
-                MostrarLista(pendientes, realizadas);
-                Console.WriteLine("Ingrese el índice de la tarea que desea marcar como realizada: ");
-                indice = Convert.ToInt32(Console.ReadLine()) - 1;
+            int indice;
+            string input;
+            bool seguir = true;
 
-                if (indice >= 0 && indice < pendientes.Count)
+            while (seguir)
+            {
+                // Mostrar el listado actual de tareas
+                MostrarLista(pendientes, realizadas);
+
+                Console.WriteLine("Ingrese el índice de la tarea que desea marcar como realizada: ");
+                input = Console.ReadLine();
+                bool esNumero = int.TryParse(input, out indice);
+
+                if (esNumero && indice > 0 && indice <= pendientes.Count)
                 {
-                    realizadas.Add(pendientes[indice]);
-                    pendientes.RemoveAt(indice);
+                    // Se pasa de 1-index a 0-index restando 1
+                    realizadas.Add(pendientes[indice - 1]);
+                    pendientes.RemoveAt(indice - 1);
                 }
                 else
                 {
@@ -66,22 +74,24 @@ namespace Lista
                 }
 
                 Console.WriteLine("¿Quiere seguir ordenando las tareas? [0]: NO - [1]: SI");
-                end = Convert.ToInt32(Console.ReadLine());
-            } while (end == 1);
+                seguir = Console.ReadLine() == "1";
+            }
         }
 
-        // Función para buscar tareas por descripción
+        // Función para buscar tareas por descripción ignorando mayúsculas/minúsculas
         public static void BuscarTarea(List<Tarea> pendientes, List<Tarea> realizadas)
         {
-            string palabra;
-            Console.WriteLine("Ingrese la palabra para buscar: ");
-            palabra = Console.ReadLine();
+            Console.WriteLine("Ingrese palabra o frase a buscar en la descripción:");
+            string palabra = Console.ReadLine();
 
-            //quiero cambiar la forma en la que se buscan las tareas. Prefiero comparar el tema de las mayusculas tambien y si se llega a encontrar parte de la cadena en lo que estoy buscando
+            // Convertimos a minúscula para comparar sin distinguir mayúsculas
+            string palabraBuscada = palabra.ToLower();
             bool encontrado = false;
+
+            // Buscar en tareas pendientes
             foreach (Tarea tarea in pendientes)
             {
-                if (tarea.Descripcion.Contains(palabra))
+                if (tarea.Descripcion.ToLower().Contains(palabraBuscada))
                 {
                     Console.WriteLine("Tarea encontrada en PENDIENTES");
                     MostrarTarea(tarea);
@@ -89,9 +99,10 @@ namespace Lista
                 }
             }
 
+            // Buscar en tareas realizadas
             foreach (Tarea tarea in realizadas)
             {
-                if (tarea.Descripcion.Contains(palabra))
+                if (tarea.Descripcion.ToLower().Contains(palabraBuscada))
                 {
                     Console.WriteLine("Tarea encontrada en REALIZADAS");
                     MostrarTarea(tarea);
@@ -105,20 +116,23 @@ namespace Lista
             }
         }
 
-        // Función para contar las horas trabajadas
+        // Función para contar el total de horas trabajadas (solo en tareas realizadas)
         public static void ContarHoras(List<Tarea> realizadas)
         {
             int horasTrabajadas = 0;
+
             foreach (Tarea tarea in realizadas)
             {
                 horasTrabajadas += tarea.Duracion;
             }
+
             Console.WriteLine($"El trabajador completó {horasTrabajadas} horas de trabajo.");
         }
 
-        // Función para mostrar el menú
+        // Función que muestra el menú principal de opciones
         public static void MostrarMenu()
         {
+            Console.WriteLine("\n======= MENÚ PRINCIPAL =======");
             Console.WriteLine("1. Ver tareas pendientes y realizadas");
             Console.WriteLine("2. Mover tarea de pendiente a realizada");
             Console.WriteLine("3. Buscar tarea por descripción");
@@ -128,3 +142,4 @@ namespace Lista
         }
     }
 }
+
